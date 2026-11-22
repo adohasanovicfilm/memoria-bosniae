@@ -371,7 +371,7 @@ function wrow(g={vrsta:"besplatno",naziv:"",url:""}){return `<div class="wrow"><
 function renderPanel(){
   const x=db[tab].find(i=>i.id===sel);
   $("#panel").classList.toggle("film",tab==="filmovi"&&!!x&&!edit);
-  $("#panel").innerHTML=x?(edit?form(x):view(x)):`<div class="empty"><h2>${COLS[tab].label}</h2>${WEB?(tab==="filmovi"?"<p>Klikni na film da vidiš sve o njemu: sinopsis, festivale, nagrade i gdje ga gledati.</p>":"<p>Klikni na karticu da vidiš sve detalje.</p>"):"<p>Odaberi karticu s lijeve strane ili dodaj novi unos.</p><p>Na web se izvoze samo kartice označene kao provjerene.</p>"}</div>`;
+  $("#panel").innerHTML=x?(edit?form(x):view(x)):`<div class="empty"><h2>${COLS[tab].label}</h2><p>Odaberi karticu s lijeve strane ili dodaj novi unos.</p><p>Na web se izvoze samo kartice označene kao provjerene.</p></div>`;
 }
 
 function goTo(t,id){tab=t;sel=id||null;edit=false;F.q=F.a=F.b=F.s=F.o="";F.n=false;full();if(id)setTimeout(()=>{const el=document.querySelector(`[data-id="${id}"]`);el&&el.scrollIntoView({block:"center"})},50)}
