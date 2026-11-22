@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MEMORIA BOSNIAE</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+/* VOICE: quiet editorial tool for an archive of record
+   IDEA: a film archive's card catalogue, each work one index card with its provenance
+   PICTURE: the catalogue itself, list of cards beside the open card
+   COLOUR and TYPE: paper white, deep ink, Srebrenica flower green; amber only for "za provjeru"
+   LAYOUT: bar with sections and actions, filters, list left, open card right */
+:root{color-scheme:light dark;--bg:light-dark(#f6f7f5,#0f1311);--card:light-dark(#fff,#161b18);--ink:light-dark(#141816,#e9ece9);--mut:light-dark(#5b625e,#9aa39e);--line:light-dark(#dde2dd,#2a312d);--g:light-dark(#1d6b4a,#5fbf8f);--a:light-dark(#9a5b00,#e0a64a);--r:light-dark(#a3262a,#ef7b7f)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Source Sans 3",system-ui,sans-serif}
+h1,h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;line-height:1.1;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:6px;background:var(--card)}
+button:hover{border-color:var(--g)}
+button.pri{background:var(--g);border-color:var(--g);color:#fff}
+button.dng{color:var(--r)}
+:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);min-height:40px}
+textarea{min-height:80px;resize:vertical}
+.app{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow:auto;background:#111513;color:#d8ddd9;display:flex;flex-direction:column;gap:22px;padding:26px 16px 18px}
+.brand{font-family:"Cormorant Garamond",serif;font-size:27px;line-height:1.02;font-weight:600;letter-spacing:.06em;color:#fff;padding:0 8px}
+.brand small{display:block;margin-top:10px;font-family:"Source Sans 3",sans-serif;font-size:12px;line-height:1.35;letter-spacing:0;font-weight:400;color:#8f9a93}
+.tabs{display:flex;flex-direction:column;gap:2px}
+.tabs button{display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:0 10px;border:0;border-radius:8px;background:none;color:#c3cac5;text-align:start;font-size:15px}
+.tabs button svg{flex:none;opacity:.8}
+.tabs button .n{margin-inline-start:auto;font-size:12px;color:#7f8a83;font-variant-numeric:tabular-nums}
+.tabs button:hover{background:#1c221f;color:#fff}
+.tabs button[aria-pressed=true]{background:#1f3a2e;color:#fff;font-weight:600}
+.tabs button[aria-pressed=true] svg{opacity:1;color:#7fd3a6}
+.sideacts{display:flex;flex-direction:column;gap:6px;margin-top:auto}
+.sideacts button{background:#1a1f1c;border-color:#2a312d;color:#d8ddd9;text-align:start;font-size:14px}
+.sideacts button:hover{border-color:#5fbf8f}
+.upbar{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);display:none;align-items:center;gap:12px;background:#111513;color:#eef1ee;padding:10px 12px 10px 18px;border-radius:12px;box-shadow:0 10px 30px rgb(0 0 0/.3);z-index:25;font-size:15px}.upbar.on{display:flex}.upbar #uplater{background:none;color:#c3cac5;border-color:#2a312d}
+.ver{display:inline-block;margin-top:10px;font-family:"Source Sans 3",sans-serif;font-size:12px;letter-spacing:.02em;font-weight:600;color:#a6e6c3;background:#1f3a2e;padding:2px 9px;border-radius:99px}.ver:empty{display:none}
+.sidecopy{margin:0;padding:0 8px;font-size:11.5px;line-height:1.4;color:#6f7a73}
+.mainw{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:18px 24px 12px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px)}
+.top h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:38px;line-height:1;margin:0 auto 0 0}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 10px;padding:4px 24px 12px;align-items:end}.tools .q{grid-column:span 2}.chk{display:flex;gap:8px;align-items:center;min-height:40px;font-size:15px;color:var(--ink)!important}.chk input{width:20px;min-height:0;height:20px;accent-color:var(--g)}
+.tools label{font-size:13px;color:var(--mut)}
+.stats{padding:0 24px 14px;font-size:14px;color:var(--mut);display:flex;gap:16px;flex-wrap:wrap}
+.stats b{color:var(--ink)}
+main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;padding:0 24px 40px;align-items:start}
+.list{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 200px);overflow:auto;padding:4px 6px 4px 2px}
+.it{flex:none;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;text-align:start;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:8px;min-height:0}
+.it[aria-current=true]{border-color:var(--g);box-shadow:0 0 0 1px var(--g)}
+.it .y{font-family:"Cormorant Garamond",serif;font-size:22px;color:var(--g);line-height:1.1;min-width:2.6em}
+.it .t{font-weight:600}
+.it .s{grid-column:2;font-size:14px;color:var(--mut)}
+.badge{font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap;align-self:start}
+.P{background:color-mix(in srgb,var(--g) 16%,transparent);color:var(--g)}
+.ZP{background:color-mix(in srgb,var(--a) 18%,transparent);color:var(--a)}
+.warn{color:var(--a);font-size:13px}
+.bk .typo{background:linear-gradient(160deg,var(--c),#121513)}
+.bk .typo .tt{font-size:18px}
+.list.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 14px;align-content:start}
+.pc{display:flex;flex-direction:column;gap:6px;text-align:start;padding:0;border:0;background:none;min-height:0}
+.pc .ph{position:relative;aspect-ratio:2/3;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgb(0 0 0/.12),0 6px 18px rgb(0 0 0/.10);outline:2px solid transparent;transition:transform .15s}
+.pc:hover .ph{transform:translateY(-2px)}.pc[aria-current=true] .ph{outline-color:var(--g);outline-offset:3px}
+.pc img{width:100%;height:100%;object-fit:cover;display:block}
+.typo{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:14px 12px;color:#eef1ee}
+.typo .tt{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:21px;line-height:1.05;text-wrap:balance}
+.typo .ty{font-size:12px;opacity:.85}.typo .tm{font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.pc .pt{font-weight:600;font-size:14px;line-height:1.25}.pc .ps{font-size:12px;color:var(--mut)}
+.wb{position:absolute;top:8px;left:8px;display:flex;align-items:center;gap:3px;background:rgb(255 255 255/.94);color:#6b4b00;font-size:12px;font-weight:700;padding:2px 7px 2px 4px;border-radius:99px}
+.sd{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;border:2px solid #fff}.sd.P{background:var(--g)}.sd.ZP{background:var(--a)}
+.hero{display:grid;grid-template-columns:180px minmax(0,1fr);gap:22px;align-items:start}
+.hero .ph{aspect-ratio:2/3;border-radius:6px;overflow:hidden;box-shadow:0 6px 22px rgb(0 0 0/.18)}.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.laurels{display:flex;flex-wrap:wrap;gap:10px 18px;margin:6px 0 4px}
+.laurel{position:relative;width:168px;height:92px;display:flex;align-items:center;justify-content:center;color:#7a5a12}
+.laurel.n{color:var(--mut)}
+.laurel svg{position:absolute;inset:0;width:100%;height:100%}
+.laurel .lt{position:relative;text-align:center;max-width:104px;line-height:1.1;display:flex;flex-direction:column;gap:2px}
+.laurel b{font-size:11.5px;text-transform:none}.laurel span{font-size:10.5px;opacity:.85}
+.fj{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.fj li{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px;align-items:baseline}
+.fj .y{color:var(--mut);font-variant-numeric:tabular-nums}
+.rz{font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;white-space:nowrap}
+.rz.nagrada{background:#f3e7c4;color:#6b4b00}.rz.nominacija{background:color-mix(in srgb,var(--a) 14%,transparent);color:var(--a)}.rz.selekcija{background:color-mix(in srgb,var(--mut) 14%,transparent);color:var(--mut)}
+.watchbar{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px}
+.playbtn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border-radius:8px;border:0;background:var(--g);color:#fff;font-weight:600;font-size:16px}
+.playbtn.paid{background:var(--ink);color:var(--bg)}
+.playbtn svg{flex:none}
+.find{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px;color:var(--mut)}
+.find a{padding:4px 10px;border:1px solid var(--line);border-radius:99px;text-decoration:none;color:var(--ink)}
+.find a:hover{border-color:var(--g)}
+.pb{position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgb(0 0 0/.3)}
+video.arch{width:100%;max-height:420px;background:#000;border-radius:8px;margin:6px 0}
+.frow{display:grid;grid-template-columns:70px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 120px 40px;gap:6px;margin-bottom:6px}
+.frow input[data-f=izvor]{grid-column:2/6}
+.drop{display:flex;gap:14px;align-items:center;padding:12px;border:1px dashed var(--line);border-radius:8px}
+.drop.on{border-color:var(--g);background:color-mix(in srgb,var(--g) 8%,transparent)}
+.drop .pv{width:72px;aspect-ratio:2/3;border-radius:4px;overflow:hidden;background:var(--line);flex:none}.drop .pv img{width:100%;height:100%;object-fit:cover}
+.panel{position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 1px 2px rgb(0 0 0/.04),0 12px 32px rgb(0 0 0/.06)}
+.panel.film{padding:0}.panel.film .inner{padding:24px}
+.backdrop{position:relative;padding:24px;border-radius:14px 14px 0 0;overflow:hidden;background:#151a17;color:#eef1ee}
+.backdrop .bg{position:absolute;inset:-30px;background-size:cover;background-position:center;filter:blur(28px) saturate(1.1);opacity:.5;transform:scale(1.1)}
+.backdrop::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgb(17 21 19/.35),rgb(17 21 19/.85))}
+.backdrop>*{position:relative;z-index:1}
+.backdrop .meta{color:#c3cac5}.backdrop h2{color:#fff}
+.backdrop .find{color:#c3cac5}.backdrop .find a{color:#eef1ee;border-color:rgb(255 255 255/.2)}
+.backdrop .laurels{margin-top:18px}.backdrop .badge.P{background:rgb(127 211 166/.18);color:#a6e6c3}.backdrop .badge.ZP{background:rgb(224 166 74/.2);color:#f0c27e}.backdrop .laurel{color:#e3c477}.backdrop .laurel.n{color:#aab3ad}
+.panel h2{font-size:34px}
+.meta{color:var(--mut);margin:6px 0 14px}
+.sec{margin:14px 0}
+.sec h3{font-size:13px;color:var(--mut);margin:0 0 4px;font-weight:600}
+.sec p{margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;padding:2px 10px;border-radius:99px;border:1px solid var(--line)}
+.w{display:flex;gap:8px;align-items:baseline;margin:4px 0}
+.w .k{font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px;white-space:nowrap}
+.k.besplatno{background:color-mix(in srgb,var(--g) 16%,transparent);color:var(--g)}
+.k.reklame,.k.placeno{background:color-mix(in srgb,var(--a) 16%,transparent);color:var(--a)}
+.k.nema{background:color-mix(in srgb,var(--r) 12%,transparent);color:var(--r)}
+a{color:var(--g);overflow-wrap:anywhere}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 12px}
+.form .full{grid-column:1/-1}
+.form label{font-size:13px;color:var(--mut);display:block;margin-bottom:3px}
+.wrow{display:grid;grid-template-columns:130px minmax(0,1fr) minmax(0,1.4fr) 40px;gap:6px;margin-bottom:6px}
+.wrow button{padding:0}
+.empty{color:var(--mut);padding:30px;text-align:center}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.on{opacity:1}
+.modal{position:fixed;inset:0;background:rgb(0 0 0/.4);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.modal.on{display:flex}
+.modal>div{background:var(--card);border-radius:10px;padding:22px;max-width:420px}
+.legal{border-top:1px solid var(--line);padding:24px 20px 40px;font-size:13px;color:var(--mut);max-width:1100px}.legal p{margin:0 0 8px}.legal strong{color:var(--ink)}
+.web #bNew,.web #bUndo,.web #bVid,.web .sideacts,.web .panel .row,.web .warnsec,.web .notesec,.web #fs,.web label[for=fs],.web .sd,.web .badge{display:none!important}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+@media(max-width:860px){.app{grid-template-columns:minmax(0,1fr)}.side{position:static;height:auto;padding:16px}.tabs{flex-direction:row;flex-wrap:wrap}.tabs button{width:auto}.sideacts{flex-direction:row;flex-wrap:wrap;margin-top:0}.panel{position:static;max-height:none}.hero{grid-template-columns:120px minmax(0,1fr)}.frow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.frow input[data-f=izvor]{grid-column:1/-1}main{grid-template-columns:minmax(0,1fr)}.list{max-height:none}.panel{position:static;max-height:none}.tools{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tools .q{grid-column:1/-1}.form{grid-template-columns:minmax(0,1fr)}.wrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">MEMORIA<br>BOSNIAE<small>The Film Archive of the Bosnian War and the Srebrenica Genocide</small><span class="ver" id="ver"></span></div>
+  <nav class="tabs" id="tabs" aria-label="Sekcije"></nav>
+  <div class="sideacts">
+    <button id="bSave">Spremi kopiju baze</button>
+    <button id="bLoad">Učitaj bazu</button>
+    <button id="bPub">Objavi na web</button>
+    <button id="bExport">Izvezi JSON</button>
+    <button id="bSet">Postavke objave</button>
+  </div>
+  <p class="sidecopy">© 2026 Ado Hasanović<br>Sva prava zadržana</p>
+  <input type="file" id="file" accept=".json,application/json" hidden><input type="file" id="vid" accept="video/*,.mp4,.mov,.mkv,.webm" multiple hidden><input type="file" id="pimg" accept="image/*" hidden><input type="file" id="srt" accept=".srt,.vtt,.txt" hidden>
+</aside>
+<div class="mainw">
+  <header class="top">
+    <h1 id="h1">Filmovi</h1>
+    <div class="acts">
+      <button id="bVid" hidden>Uvezi videe iz ADONIS</button>
+      <button id="bUndo" disabled>Poništi</button>
+      <button class="pri" id="bNew">+ Novi unos</button>
+    </div>
+  </header>
+  <div class="tools" id="tools"></div>
+  <div class="stats" id="stats"></div>
+  <main>
+    <div class="list" id="list" role="list"></div>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+  <footer class="legal">
+    <p><strong>© 2026 Ado Hasanović.</strong> Autor, istraživač i urednik baze MEMORIA BOSNIAE. Sva prava zadržana.</p>
+    <p>Ova baza podataka, njen izbor, struktura, opisi i prevodi zaštićeni su autorskim pravom i pravom proizvođača baze podataka. Zabranjeno je kopiranje, umnožavanje, preuzimanje cijele baze ili njenih dijelova i distribucija bez pisane dozvole autora.</p>
+    <p lang="en">© 2026 Ado Hasanović. All rights reserved. This database is protected by copyright and database rights. No copying, reproduction, extraction or distribution without the author's written permission.</p>
+  </footer>
+</div>
+</div>
+<div class="upbar" id="upbar" role="status"><span id="upmsg"></span><button class="pri" id="upgo">Restartuj sada</button><button id="uplater">Kasnije</button></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="modal" id="smodal"><div style="max-width:480px"><h2 style="font-size:28px;margin:0 0 8px">Objava na web</h2><p style="margin:0 0 12px;color:var(--mut);font-size:15px">Web stranica: <a href="#" id="siteLink">adohasanovicfilm.github.io/memoria-bosniae</a></p><label for="tok" style="font-size:13px;color:var(--mut)">GitHub ključ (token) s pravom pisanja u repo memoria-bosniae</label><input id="tok" type="password" autocomplete="off" placeholder="github_pat_…" style="margin:4px 0 6px"><p id="tokState" style="margin:0 0 10px;font-size:13px;color:var(--mut)"></p><div class="row" style="margin-top:6px"><button class="pri" id="tokSave">Spremi ključ</button><button id="tokNew">Napravi ključ na GitHubu</button><button id="sClose">Zatvori</button></div></div></div>
+<div class="modal" id="modal"><div><p id="mq"></p><div class="row"><button class="dng" id="my">Da, obriši</button><button id="mn">Odustani</button></div></div></div>
+
+<script>
+{
+const SEED=(/*SEED*/null)||{filmovi:[],knjige:[],phd:[],hronologija:[],svjedocanstva:[],arhiva:[]};
+const KEY="mb-cinema-db";
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const get=(o,p)=>p.split(".").reduce((a,k)=>a?.[k],o);
+const set=(o,p,v)=>{const ks=p.split(".");let a=o;ks.slice(0,-1).forEach(k=>{a[k]=a[k]||{};a=a[k]});a[ks.at(-1)]=v};
+
+const TIP={igrani:"Igrani",dokumentarni:"Dokumentarni",kratki:"Kratki",tv:"TV i serije",sporni:"Propagandni i sporni"};
+const GL={besplatno:"Besplatno bez reklama",reklame:"Besplatno uz reklame",placeno:"Plaćeno",nema:"Nedostupno online"};
+const JEZ={bs:"bosanski",hr:"hrvatski",sr:"srpski",en:"engleski",it:"talijanski",fr:"francuski",de:"njemački",nl:"holandski"};
+const DOZ={nema:"Nema dozvole (ne ide na web)",presskit:"Press kit distributera",distributer:"Pisana dozvola distributera",vlastito:"Vlastito djelo"};
+const REZ={nagrada:"Nagrada",nominacija:"Nominacija",selekcija:"Selekcija"};
+const wins=x=>(x.festivali||[]).filter(r=>r.rezultat==="nagrada").length;
+const TONES=["#2b332e","#3a2f2a","#24303a","#3b3a2a","#2f2a3a","#1f3330","#3a2a2f","#33302b"];
+const tone=t=>TONES[[...String(t)].reduce((a,c)=>a+c.charCodeAt(0),0)%TONES.length];
+const typo=x=>`<div class="typo" style="background:linear-gradient(160deg,${tone(x.naslov)},#121513)"><span></span><span class="tt">${esc(x.naslov)}</span><span class="ty">${esc([x.godina,x.rezija].filter(Boolean).join(" · "))}<br><span class="tm">${esc(TIP[x.tip]||"")}</span></span></div>`;
+const AUTO={};
+const PLAYSVG='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5 L12 7 L3 12.5 Z" fill="currentColor"/></svg>';
+const freeSrc=x=>(x.gledati||[]).find(g=>g.url&&g.vrsta==="besplatno")||(x.gledati||[]).find(g=>g.url&&g.vrsta==="reklame");
+const paidSrc=x=>(x.gledati||[]).find(g=>g.url&&g.vrsta==="placeno");
+const FIND=[["JustWatch Italija","https://www.justwatch.com/it/cerca?q="],["JustWatch SAD","https://www.justwatch.com/us/search?q="],["MUBI","https://mubi.com/search/films?query="],["ARTE","https://www.arte.tv/it/search/?q="],["MLOL","https://www.medialibrary.it/media/ricerca.aspx?keywords="],["Letterboxd","https://letterboxd.com/search/films/"],["YouTube","https://www.youtube.com/results?search_query="]];
+const findLinks=x=>{const q=encodeURIComponent((x.naslovEn||x.naslov)+(x.godina?" "+x.godina:""));const qt=encodeURIComponent(x.naslovEn||x.naslov);return FIND.map(([n,u])=>`<a href="${u}${n==="Letterboxd"?qt+"/":n.startsWith("JustWatch")?qt:q}" target="_blank" rel="noopener">${n}</a>`).join("")};
+const posterHtml=x=>{const u=x.poster||AUTO[x.id];return u?`<img src="${u}" alt="Plakat: ${esc(x.naslov)}" loading="lazy">`:typo(x)};
+const LEAF=(()=>{const P=[];for(let i=0;i<=8;i++){const th=(235-i*14)*Math.PI/180;P.push([56+48*Math.cos(th),52-44*Math.sin(th)])}
+let d=`<path d="M${P.map(q=>q[0].toFixed(1)+" "+q[1].toFixed(1)).join(" L")}" fill="none" stroke="currentColor" stroke-width="1.6"/>`;
+for(let i=1;i<P.length;i++){const[a,b]=P[i-1],[c,e]=P[i];const ang=Math.atan2(e-b,c-a)*180/Math.PI;for(const side of[-1,1]){const off=side*6,nx=-(e-b),ny=(c-a),L=Math.hypot(nx,ny)||1,x=c+nx/L*off,y=e+ny/L*off;d+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2.8" ry="7" transform="rotate(${(ang+90+side*35).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`}}return d})();
+const laurel=r=>`<div class="laurel ${r.rezultat==="nagrada"?"w":"n"}"><svg viewBox="0 0 184 100" aria-hidden="true"><g fill="currentColor" opacity="${r.rezultat==="nagrada"?0.85:0.45}">${LEAF}</g><g fill="currentColor" opacity="${r.rezultat==="nagrada"?0.85:0.45}" transform="translate(184 0) scale(-1 1)">${LEAF}</g></svg><div class="lt"><b>${esc(r.nagrada||REZ[r.rezultat])}</b><span>${esc([r.festival,r.god].filter(Boolean).join(" "))}</span></div></div>`;
+const SAG={da:"Saglasnost: da",ne:"Saglasnost: nema",utoku:"Saglasnost: u toku"};
+const PRAVA={nepoznato:"Prava nepoznata",javno:"Javno, samo link",dozvola:"Dozvola autora",vlastito:"Vlastiti snimak"};
+const COLS={
+ filmovi:{label:"Filmovi",prefix:"f",title:x=>x.naslov,year:x=>x.godina,sub:x=>[x.rezija,TIP[x.tip]].filter(Boolean).join(" · "),
+  fields:[["naslov","Originalni naslov","text"],["naslovEn","Engleski naslov","text"],["naslovIt","Talijanski naslov","text"],["tip","Vrsta","select",TIP],["godina","Godina","num"],["trajanje","Trajanje","text"],["rezija","Režija","text"],["zemlja","Zemlja","text"],["sinopsis.bs","Sinopsis BS","area"],["sinopsis.en","Sinopsis EN","area"],["sinopsis.it","Sinopsis IT","area"],["poster","Plakat","poster"],["posterIzvor","Izvor plakata","text"],["posterDozvola","Dozvola za plakat","select",DOZ],["festivali","Festivalski put i nagrade","fest"],["gledati","Gdje gledati","watch"],["teme","Teme (zarezom)","tags"],["izvori","Izvori (jedan link po redu)","lines"],["status","Status","select",{P:"Provjereno",ZP:"Za provjeru"}],["napomena","Napomena","area"]],
+  blank:()=>({tip:"dokumentarni",naslov:"Novi film",naslovEn:"",naslovIt:"",godina:"",zemlja:"",rezija:"",trajanje:"",sinopsis:{bs:"",en:"",it:""},festivali:[],poster:"",posterIzvor:"",posterDozvola:"nema",gledati:[],teme:[],izvori:[],status:"ZP",napomena:""}),
+  text:x=>[x.naslov,x.naslovEn,x.naslovIt,x.rezija,x.zemlja,x.godina,(x.festivali||[]).map(r=>r.festival+" "+r.nagrada).join(" "),x.sinopsis?.bs,(x.teme||[]).join(" ")].join(" ")},
+ knjige:{label:"Knjige",prefix:"b",title:x=>x.naslov,year:x=>x.godina,sub:x=>[x.autor,JEZ[x.jezik]||x.jezik].filter(Boolean).join(" · "),
+  fields:[["naslov","Naslov","text"],["autor","Autor","text"],["godina","Godina","num"],["izdavac","Izdavač","text"],["jezik","Jezik","select",JEZ],["vrsta","Vrsta","select",{"svjedočanstvo":"Svjedočanstvo","historija i novinarstvo":"Historija i novinarstvo","izvještaj":"Izvještaj","proza i poezija":"Proza i poezija","grafički roman i fotografija":"Grafički roman i fotografija","studija o filmu":"Studija o filmu"}],["opis","Opis","area"],["status","Status","select",{P:"Provjereno",ZP:"Za provjeru"}]],
+  blank:()=>({vrsta:"historija i novinarstvo",autor:"",naslov:"Nova knjiga",godina:"",izdavac:"",jezik:"bs",opis:"",status:"ZP"}),
+  text:x=>[x.naslov,x.autor,x.izdavac,x.godina,x.opis,x.vrsta].join(" ")},
+ phd:{label:"PhD",prefix:"d",title:x=>x.naslov,year:x=>x.godina,sub:x=>[x.autor,x.univerzitet].filter(Boolean).join(" · "),
+  fields:[["naslov","Naslov disertacije","area"],["autor","Autor","text"],["univerzitet","Univerzitet","text"],["godina","Godina","num"],["url","Repozitorij (link)","text"],["status","Status","select",{P:"Provjereno",ZP:"Za provjeru"}],["napomena","Napomena","area"]],
+  blank:()=>({autor:"",naslov:"Nova disertacija",univerzitet:"",godina:"",url:"",status:"ZP",napomena:""}),
+  text:x=>[x.naslov,x.autor,x.univerzitet,x.godina].join(" ")},
+ hronologija:{label:"Hronologija",prefix:"h",title:x=>x.tekst?.bs,year:x=>x.datum?.slice(0,4),sub:x=>[x.datum,x.izvor].filter(Boolean).join(" · "),
+  fields:[["datum","Datum (GGGG-MM-DD)","text"],["tekst.bs","Tekst BS","area"],["tekst.en","Tekst EN","area"],["tekst.it","Tekst IT","area"],["izvor","Izvor","text"],["status","Status","select",{P:"Provjereno",ZP:"Za provjeru"}]],
+  blank:()=>({datum:new Date().toISOString().slice(0,10),tekst:{bs:"Novi događaj",en:"",it:""},izvor:"",status:"ZP"}),
+  text:x=>[x.datum,x.tekst?.bs,x.tekst?.en,x.izvor].join(" ")},
+ svjedocanstva:{label:"Svjedočanstva",prefix:"s",title:x=>x.ime,year:x=>(x.datum||"").slice(0,4),sub:x=>[x.mjesto,SAG[x.saglasnost]].filter(Boolean).join(" · "),
+  fields:[["ime","Ime svjedoka","text"],["mjesto","Mjesto snimanja","text"],["datum","Datum snimanja (GGGG-MM-DD)","text"],["autor","Autor snimka","text"],["jezik","Jezik iskaza","select",JEZ],["trajanje","Trajanje","text"],["video","Video (fajl ili link)","text"],["saglasnost","Saglasnost","select",SAG],["dokument","Gdje je dokument saglasnosti","text"],["transkript.bs","Transkript BS","srt"],["transkript.en","Transkript EN","srt"],["transkript.it","Transkript IT","srt"],["indeks","Indeks po minutama (npr. 03:10 Život u enklavi)","lines"],["mjesta","Mjesta (zarezom)","tags"],["teme","Teme (zarezom)","tags"],["filmovi","Povezani filmovi (zarezom)","tags"],["status","Status","select",{P:"Provjereno",ZP:"Za provjeru"}],["napomena","Napomena","area"]],
+  blank:()=>({ime:"Novo svjedočanstvo",mjesto:"",datum:"",autor:"",jezik:"bs",trajanje:"",video:"",saglasnost:"ne",dokument:"",transkript:{bs:"",en:"",it:""},indeks:[],mjesta:[],teme:[],filmovi:[],status:"ZP",napomena:""}),
+  text:x=>[x.ime,x.mjesto,x.autor,x.datum,(x.teme||[]).join(" "),(x.mjesta||[]).join(" "),x.transkript?.bs,x.transkript?.en].join(" ")},
+ arhiva:{label:"Arhiva videa",prefix:"v",title:x=>x.naslov,year:x=>(x.datum||"").slice(0,4),sub:x=>[x.izvor,x.trajanje,PRAVA[x.prava]].filter(Boolean).join(" · "),
+  fields:[["naslov","Naslov","text"],["originalni","Originalni naziv fajla","text"],["izvor","Izvor (kanal, autor, arhiv)","text"],["url","Link na original","text"],["datum","Datum snimka (GGGG-MM-DD)","text"],["trajanje","Trajanje","text"],["prava","Prava korištenja","select",PRAVA],["opis","Opis","area"],["transkript.bs","Transkript BS","srt"],["teme","Teme (zarezom)","tags"],["status","Status","select",{P:"Provjereno",ZP:"Za provjeru"}],["napomena","Napomena","area"]],
+  blank:()=>({naslov:"Novi video",originalni:"",izvor:"",url:"",datum:"",trajanje:"",prava:"nepoznato",opis:"",transkript:{bs:"",en:"",it:""},teme:[],status:"ZP",napomena:""}),
+  text:x=>[x.naslov,x.originalni,x.izvor,x.opis,(x.teme||[]).join(" ")].join(" ")}
+};
+
+let db=null;try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!db||!db.filmovi)db=clone(SEED);
+function migrate(d){(d.filmovi||[]).forEach(f=>{if(!Array.isArray(f.festivali)){const sf=SEED.filmovi.find(z=>z.id===f.id&&z.naslov===f.naslov);f.festivali=sf&&sf.festivali.length?clone(sf.festivali):(f.festivali?[{god:"",festival:String(f.festivali),sekcija:"",nagrada:"",rezultat:"selekcija",izvor:""}]:[])}f.poster=f.poster||"";f.posterIzvor=f.posterIzvor||"";f.posterDozvola=f.posterDozvola||"nema"});d.svjedocanstva=d.svjedocanstva||[];d.arhiva=d.arhiva||[];d.naziv="MEMORIA BOSNIAE";return d}
+db=migrate(db);
+let tab="filmovi",sel=null,edit=false,undo=null;
+const F={q:"",a:"",b:"",s:"",n:false,o:""};
+
+function persist(){if(typeof WEB!=="undefined"&&WEB)return;if(window.mb){db.autor="Ado Hasanović";db.izmijenjeno=new Date().toISOString();window.mb.save(JSON.stringify(db)).catch(()=>toast("Spremanje nije uspjelo"));return}db.autor="Ado Hasanović";db.prava="© 2026 Ado Hasanović. Sva prava zadržana. Zabranjeno kopiranje i distribucija bez pisane dozvole autora.";db.izmijenjeno=new Date().toISOString();try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast("Automatsko spremanje nije dostupno; koristi Spremi bazu.")}}
+function snap(){undo=clone(db);$("#bUndo").disabled=false}
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),2600)}
+function warns(x){const w=[];if(tab==="filmovi"&&x.status==="P"&&(x.izvori||[]).length<2)w.push("Manje od dva izvora");if(tab==="filmovi"&&!(x.gledati||[]).length)w.push("Nema podatka gdje gledati");if(tab==="filmovi"&&!x.sinopsis?.en)w.push("Nema EN sinopsisa");if(tab==="filmovi"&&x.poster&&x.posterDozvola==="nema")w.push("Plakat bez dozvole: ne ide na web");if(tab==="svjedocanstva"&&x.saglasnost!=="da")w.push("Nema potvrđene saglasnosti: ne ide na web");if(tab==="svjedocanstva"&&!x.transkript?.bs)w.push("Nema transkripta");if(tab==="arhiva"&&x.prava==="nepoznato")w.push("Prava nepoznata: ne ide na web");return w}
+
+function filters(){
+  const c=COLS[tab];let opts="";
+  const sel=(id,label,map)=>`<div><label for="${id}">${label}</label><select id="${id}"><option value="">Sve</option>${Object.entries(map).map(([k,v])=>`<option value="${esc(k)}">${esc(v)}</option>`).join("")}</select></div>`;
+  if(tab==="filmovi")opts=sel("fa","Vrsta",TIP)+sel("fb","Dostupnost",GL)+`<div><label for="fo">Poredaj</label><select id="fo"><option value="">Najnovije</option><option value="stari">Najstarije</option><option value="naslov">Naslov A–Ž</option><option value="nagrade">Broj nagrada</option></select></div><label class="chk"><input type="checkbox" id="fn"${F.n?" checked":""}> Samo nagrađeni</label>`;
+  else if(tab==="knjige")opts=sel("fa","Vrsta",c.fields.find(f=>f[0]==="vrsta")[3])+sel("fb","Jezik",JEZ);
+  else opts="<div></div><div></div>";
+  $("#tools").innerHTML=`<div class="q"><label for="fq">Pretraga</label><input id="fq" type="search" placeholder="Naslov, autor, festival, tema…" value="${esc(F.q)}"></div>${opts}${sel("fs","Status",{P:"Provjereno",ZP:"Za provjeru",W:"S upozorenjem"})}<button id="fx">Očisti</button>`;
+  ["fa","fb","fs","fo"].forEach(id=>{const e=$("#"+id);if(e)e.value=F[id[1]]||""});
+}
+function rows(){
+  const c=COLS[tab],q=F.q.toLowerCase();
+  return db[tab].filter(x=>{
+    if(q&&!c.text(x).toLowerCase().includes(q))return false;
+    if(F.s==="W"){if(!warns(x).length)return false}else if(F.s&&x.status!==F.s)return false;
+    if(tab==="filmovi"){if(F.n&&!wins(x))return false;if(F.a&&x.tip!==F.a)return false;if(F.b&&!(x.gledati||[]).some(g=>g.vrsta===F.b))return false}
+    if(tab==="knjige"){if(F.a&&x.vrsta!==F.a)return false;if(F.b&&x.jezik!==F.b)return false}
+    return true}).sort((a,b)=>tab==="filmovi"&&F.o==="nagrade"?wins(b)-wins(a)||(+c.year(b)||0)-(+c.year(a)||0):tab==="filmovi"&&F.o==="stari"?(+c.year(a)||9999)-(+c.year(b)||9999):tab==="filmovi"&&F.o==="naslov"?String(c.title(a)).localeCompare(String(c.title(b)),"bs"):tab==="hronologija"?String(a.datum).localeCompare(b.datum):(+c.year(b)||0)-(+c.year(a)||0)||String(c.title(a)).localeCompare(String(c.title(b))));
+}
+const ICO={filmovi:'<rect x="3" y="4" width="14" height="12" rx="1.5"/><path d="M6 4v12M14 4v12M3 8h3M3 12h3M14 8h3M14 12h3"/>',knjige:'<path d="M4 4.5c2-1 4-1 6 0v12c-2-1-4-1-6 0z"/><path d="M10 4.5c2-1 4-1 6 0v12c-2-1-4-1-6 0z"/>',phd:'<path d="M2 8l8-4 8 4-8 4z"/><path d="M5 9.5V14c3 2 7 2 10 0V9.5"/>',hronologija:'<path d="M10 3v14"/><circle cx="10" cy="6" r="1.8"/><circle cx="10" cy="11" r="1.8"/><path d="M12 6h5M3 11h5M12 15h4"/>',svjedocanstva:'<rect x="7" y="3" width="6" height="9" rx="3"/><path d="M4.5 10a5.5 5.5 0 0011 0M10 15.5V18"/>',arhiva:'<rect x="3" y="4" width="14" height="4" rx="1"/><path d="M4.5 8v8h11V8M8 11h4"/>'};
+function renderTabs(){$("#tabs").innerHTML=Object.entries(COLS).map(([k,c])=>`<button data-t="${k}" aria-pressed="${k===tab}"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k]||""}</svg><span>${c.label}</span><span class="n">${db[k].length}</span></button>`).join("");$("#h1").textContent=COLS[tab].label}
+function renderList(){
+  const c=COLS[tab],R=rows(),all=db[tab];
+  const p=all.filter(x=>x.status==="P").length;
+  if(typeof WEB!=="undefined"&&WEB){$("#stats").innerHTML=`<span>Prikazano <b>${R.length}</b> od ${all.length}</span>${db.izvezeno?`<span>Ažurirano ${esc(new Date(db.izvezeno).toLocaleDateString("bs"))}</span>`:""}`}else
+  $("#stats").innerHTML=`<span>Prikazano <b>${R.length}</b> od ${all.length}</span><span>Provjereno <b>${p}</b></span><span>Za provjeru <b>${all.length-p}</b></span><span>Zadnja izmjena ${esc(new Date(db.izmijenjeno).toLocaleString("bs"))}</span>`;
+  $("#list").classList.toggle("grid",tab==="filmovi"||tab==="knjige");
+  if(tab==="knjige"){const BC={"svjedočanstvo":"#5a2f2a","historija i novinarstvo":"#23384a","izvještaj":"#3d3a2a","proza i poezija":"#2f2a46","grafički roman i fotografija":"#204036","studija o filmu":"#4a2f3e"};
+    $("#list").innerHTML=R.length?R.map(x=>`<button class="pc bk" role="listitem" data-id="${x.id}" aria-current="${x.id===sel}"><span class="ph"><span class="typo" style="--c:${BC[x.vrsta]||"#2b332e"}"><span class="tm">${esc(x.vrsta)}</span><span class="tt">${esc(x.naslov)}</span><span class="ty">${esc(x.autor)}${x.godina?"<br>"+esc(x.godina):""}</span></span><span class="sd ${x.status}"></span></span><span class="pt">${esc(x.naslov)}</span><span class="ps">${esc([x.autor,JEZ[x.jezik]].filter(Boolean).join(" · "))}</span></button>`).join(""):`<div class="empty">Nema rezultata za ove filtere.</div>`;return}
+  if(tab==="filmovi"){$("#list").innerHTML=R.length?R.map(x=>{const n=wins(x);return `<button class="pc" role="listitem" data-id="${x.id}" aria-current="${x.id===sel}"><span class="ph">${posterHtml(x)}${n?`<span class="wb"><svg width="22" height="13" viewBox="0 0 184 100" aria-hidden="true"><g fill="currentColor">${LEAF}</g><g fill="currentColor" transform="translate(184 0) scale(-1 1)">${LEAF}</g></svg>${n}</span>`:""}${freeSrc(x)?`<span class="pb" title="Besplatno online" style="color:#fff">${PLAYSVG}</span>`:""}<span class="sd ${x.status}" title="${x.status==="P"?"Provjereno":"Za provjeru"}"></span></span><span class="pt">${esc(x.naslov)}</span><span class="ps">${esc([x.godina,x.rezija].filter(Boolean).join(" · "))}</span></button>`}).join(""):`<div class="empty">Nema rezultata za ove filtere.</div>`;return}
+  $("#list").innerHTML=R.length?R.map(x=>{const w=warns(x);return `<button class="it" role="listitem" data-id="${x.id}" aria-current="${x.id===sel}"><span class="y">${esc(c.year(x)||"")}</span><span class="t">${esc(c.title(x))}</span><span class="badge ${x.status}">${x.status==="P"?"Provjereno":"Za provjeru"}</span><span class="s">${esc(c.sub(x))}${w.length?` <span class="warn">· ${w.length} upoz.</span>`:""}</span></button>`}).join(""):`<div class="empty">Nema rezultata za ove filtere.</div>`;
+}
+function view(x){
+  const c=COLS[tab],w=warns(x);
+  let b="";
+  if(tab==="filmovi"){
+    const alt=[x.naslovEn,x.naslovIt].filter(t=>t&&t!==x.naslov);
+    const fj=(x.festivali||[]).slice().sort((a,b)=>(+a.god||9999)-(+b.god||9999));const lw=fj.filter(r=>r.rezultat!=="selekcija");
+    b=`${alt.length?`<p class="meta">${esc(alt.join(" · "))}</p>`:""}<p class="meta">${esc([x.godina,x.zemlja,x.rezija,x.trajanje,TIP[x.tip]].filter(Boolean).join(" · "))}</p>
+    ${(()=>{const fr=freeSrc(x),pd=paidSrc(x);return `<div class="watchbar">${fr?`<button class="playbtn" data-play="${esc(fr.url)}">${PLAYSVG} Gledaj ${fr.vrsta==="besplatno"?"besplatno":"besplatno uz reklame"} · ${esc(fr.naziv||"")}</button>`:""}${pd?`<button class="playbtn paid" data-play="${esc(pd.url)}">${PLAYSVG} Gledaj · ${esc(pd.naziv||"plaćeno")}</button>`:""}</div><div class="find"><span>${fr||pd?"Traži i na:":"Gdje gledati:"}</span>${findLinks(x)}</div>`})()}
+<!--L-->${lw.length?`<div class="laurels">${lw.map(laurel).join("")}</div>`:""}<!--split-->
+    ${fj.length?`<div class="sec"><h3>Festivalski put (${fj.length})</h3><ol class="fj">${fj.map(r=>`<li><span class="y">${esc(r.god||"")}</span><span><strong>${esc(r.festival)}</strong>${r.sekcija?` · ${esc(r.sekcija)}`:""}${r.nagrada?` · ${esc(r.nagrada)}`:""}${r.izvor?` · <a href="${esc(r.izvor)}" target="_blank" rel="noopener">izvor</a>`:""}</span><span class="rz ${r.rezultat}">${REZ[r.rezultat]||""}</span></li>`).join("")}</ol></div>`:""}
+    ${!x.poster&&AUTO[x.id]?`<div class="sec"><h3>Plakat</h3><p>Wikipedia, učitan automatski. Za web dodaj plakat s dozvolom.</p></div>`:""}
+    ${x.poster?`<div class="sec"><h3>Plakat</h3><p>${esc(DOZ[x.posterDozvola]||"")}${x.posterIzvor?` · ${esc(x.posterIzvor)}`:""}</p></div>`:""}
+    ${["bs","en","it"].map(l=>x.sinopsis?.[l]?`<div class="sec"><h3>Sinopsis ${l.toUpperCase()}</h3><p>${esc(x.sinopsis[l])}</p></div>`:"").join("")}
+    <div class="sec"><h3>Gdje gledati</h3>${(x.gledati||[]).length?x.gledati.map(g=>`<div class="w"><span class="k ${g.vrsta}">${GL[g.vrsta]}</span><span>${g.url?`<a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.naziv||g.url)}</a>`:esc(g.naziv)}</span></div>`).join(""):(typeof WEB!=="undefined"&&WEB?"<p>Trenutno nema poznatog online izvora.</p>":"<p class='warn'>Nije uneseno.</p>")}</div>
+    ${(x.teme||[]).length?`<div class="sec"><h3>Teme</h3><div class="chips">${x.teme.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div>`:""}`;
+  }else if(tab==="knjige"){
+    b=`<p class="meta">${esc([x.autor,x.godina||"",x.izdavac,JEZ[x.jezik],x.vrsta].filter(Boolean).join(" · "))}</p>${x.opis?`<div class="sec"><p>${esc(x.opis)}</p></div>`:""}`;
+  }else if(tab==="phd"){
+    b=`<p class="meta">${esc([x.autor,x.univerzitet,x.godina].filter(Boolean).join(" · "))}</p><div class="sec"><h3>Repozitorij</h3>${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.url)}</a>`:"<p class='warn'>Link nije unesen.</p>"}</div>`;
+  }else if(tab==="svjedocanstva"||tab==="arhiva"){
+    const tr=x.transkript||{};
+    b=`<p class="meta">${esc(c.sub(x))}</p>${tab==="svjedocanstva"?`<p class="meta">${esc([x.datum,x.autor,x.trajanje,JEZ[x.jezik]].filter(Boolean).join(" · "))}</p>`:`<p class="meta">${esc([x.datum,x.originalni].filter(Boolean).join(" · "))}</p>`}
+    ${x.putanja?`<video class="arch" controls preload="metadata" src="file://${encodeURI(x.putanja)}"></video>`:""}
+    ${x.video||x.url?`<div class="sec"><h3>Video</h3><p>${/^https?:/.test(x.video||x.url)?`<a href="${esc(x.video||x.url)}" target="_blank" rel="noopener">${esc(x.video||x.url)}</a>`:esc(x.video)}</p></div>`:""}
+    ${x.opis?`<div class="sec"><p>${esc(x.opis)}</p></div>`:""}
+    ${x.dokument?`<div class="sec"><h3>Dokument saglasnosti</h3><p>${esc(x.dokument)}</p></div>`:""}
+    ${(x.indeks||[]).length?`<div class="sec"><h3>Indeks</h3>${x.indeks.map(l=>`<div>${esc(l)}</div>`).join("")}</div>`:""}
+    ${["bs","en","it"].map(l=>tr[l]?`<div class="sec"><h3>Transkript ${l.toUpperCase()}</h3><p style="white-space:pre-line;max-height:240px;overflow:auto">${esc(tr[l])}</p></div>`:"").join("")}
+    ${["mjesta","teme","filmovi"].map(k=>(x[k]||[]).length?`<div class="sec"><h3>${k[0].toUpperCase()+k.slice(1)}</h3><div class="chips">${x[k].map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div>`:"").join("")}`;
+  }else{
+    b=`<p class="meta">${esc(x.datum)}</p>${["en","it"].map(l=>x.tekst?.[l]?`<div class="sec"><h3>${l.toUpperCase()}</h3><p>${esc(x.tekst[l])}</p></div>`:"").join("")}${x.izvor?`<div class="sec"><h3>Izvor</h3><p>${esc(x.izvor)}</p></div>`:""}`;
+  }
+  const src=(x.izvori||[]);
+  const head=`<span class="badge ${x.status}">${x.status==="P"?"Provjereno":"Za provjeru"}</span><h2 style="margin-top:10px">${esc(c.title(x))}</h2>`;
+  if(tab==="filmovi"){const u=x.poster||AUTO[x.id];const iL=b.indexOf("<!--L-->"),iS=b.indexOf("<!--split-->");const top=b.slice(0,iL),laur=b.slice(iL,iS),rest=b.slice(iS);
+    return `<div class="backdrop">${u?`<div class="bg" style="background-image:url('${u}')"></div>`:""}<div class="hero"><div class="ph">${posterHtml(x)}</div><div>${head}${top}</div></div>${laur}</div><div class="inner">${rest}`+tail(x,w)+`</div>`}
+  return head+b+tail(x,w)}
+function tail(x,w){const src=(x.izvori||[]);return `
+  ${src.length?`<div class="sec"><h3>Izvori (${src.length})</h3>${src.map(u=>`<div><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u)}</a></div>`).join("")}</div>`:""}
+  ${x.napomena?`<div class="sec notesec"><h3>Napomena</h3><p>${esc(x.napomena)}</p></div>`:""}
+  ${w.length?`<div class="sec warnsec"><h3>Upozorenja</h3>${w.map(t=>`<div class="warn">${esc(t)}</div>`).join("")}</div>`:""}
+  <div class="row"><button class="pri" id="bEdit">Uredi</button>${x.status==="ZP"?`<button id="bOk">Označi kao provjereno</button>`:`<button id="bZp">Vrati na provjeru</button>`}<button class="dng" id="bDel">Obriši</button></div>`;
+}
+function form(x){
+  const c=COLS[tab];
+  return `<h2>Uređivanje</h2><form class="form" id="fm" style="margin-top:14px">${c.fields.map(([k,l,t,o])=>{
+    const v=get(x,k),cls=["area","watch","lines","srt","fest","poster"].includes(t)||k.startsWith("naslov")&&tab!=="filmovi"?"full":"";
+    let inp;
+    if(t==="select")inp=`<select name="${k}">${Object.entries(o).map(([a,b])=>`<option value="${esc(a)}"${a===v?" selected":""}>${esc(b)}</option>`).join("")}</select>`;
+    else if(t==="area")inp=`<textarea name="${k}">${esc(v)}</textarea>`;
+    else if(t==="srt")inp=`<textarea name="${k}" style="min-height:120px">${esc(v)}</textarea><button type="button" data-srt="${k}" style="margin-top:6px">Učitaj .srt ili .txt</button>`;
+    else if(t==="lines")inp=`<textarea name="${k}">${esc((v||[]).join("\n"))}</textarea>`;
+    else if(t==="tags")inp=`<input name="${k}" value="${esc((v||[]).join(", "))}">`;
+    else if(t==="fest")inp=`<div id="fests">${(v||[]).map(frow).join("")}</div><button type="button" id="fAdd">+ Dodaj festival ili nagradu</button>`;
+    else if(t==="poster")inp=`<div class="drop" id="drop"><div class="pv" id="pv">${v?`<img src="${v}" alt="">`:""}</div><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px">Prevuci sliku plakata ovdje ili</span><div class="acts"><button type="button" id="pPick">Izaberi sliku</button><button type="button" id="pDel" class="dng">Ukloni</button></div></div><input type="hidden" name="${k}" value="${esc(v)}"></div>`;
+    else if(t==="watch")inp=`<div id="ws">${(v||[]).map(wrow).join("")}</div><button type="button" id="wAdd">+ Dodaj izvor gledanja</button>`;
+    else inp=`<input name="${k}" ${t==="num"?'inputmode="numeric"':""} value="${esc(v)}">`;
+    return `<div class="${cls||(t==="tags"?"full":"")}"><label>${esc(l)}</label>${inp}</div>`}).join("")}
+  <div class="full row"><button class="pri" type="submit">Spremi karticu</button><button type="button" id="bCancel">Odustani</button></div></form>`;
+}
+function frow(r={god:"",festival:"",sekcija:"",nagrada:"",rezultat:"selekcija",izvor:""}){return `<div class="frow"><input data-f="god" placeholder="Godina" value="${esc(r.god)}" inputmode="numeric"><input data-f="festival" placeholder="Festival" value="${esc(r.festival)}"><input data-f="sekcija" placeholder="Sekcija" value="${esc(r.sekcija)}"><input data-f="nagrada" placeholder="Nagrada" value="${esc(r.nagrada)}"><select data-f="rezultat">${Object.entries(REZ).map(([a,b])=>`<option value="${a}"${a===r.rezultat?" selected":""}>${b}</option>`).join("")}</select><button type="button" data-fdel aria-label="Ukloni">×</button><input data-f="izvor" placeholder="Link na izvor (katalog festivala)" value="${esc(r.izvor)}"></div>`}
+function wrow(g={vrsta:"besplatno",naziv:"",url:""}){return `<div class="wrow"><select data-w="vrsta">${Object.entries(GL).map(([a,b])=>`<option value="${a}"${a===g.vrsta?" selected":""}>${b}</option>`).join("")}</select><input data-w="naziv" placeholder="Platforma" value="${esc(g.naziv)}"><input data-w="url" placeholder="https://…" value="${esc(g.url)}"><button type="button" data-wdel aria-label="Ukloni">×</button></div>`}
+function renderPanel(){
+  const x=db[tab].find(i=>i.id===sel);
+  $("#panel").classList.toggle("film",tab==="filmovi"&&!!x&&!edit);
+  $("#panel").innerHTML=x?(edit?form(x):view(x)):`<div class="empty"><h2>${COLS[tab].label}</h2><p>Odaberi karticu s lijeve strane ili dodaj novi unos.</p><p>Na web se izvoze samo kartice označene kao provjerene.</p></div>`;
+}
+function render(){renderTabs();renderList();renderPanel();$("#bVid").hidden=tab!=="arhiva"}
+function full(){filters();render()}
+
+function download(name,obj){if(window.mb){window.mb.saveFile(name,JSON.stringify(obj,null,2)).then(p=>p&&toast("Spremljeno: "+p));return}const b=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+const stamp=()=>new Date().toISOString().slice(0,10);
+
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;tab=b.dataset.t;sel=null;edit=false;F.a=F.b=F.s="";full()});
+$("#tools").addEventListener("input",e=>{const id=e.target.id;if(id==="fq")F.q=e.target.value;else if(id==="fn")F.n=e.target.checked;else if(id)F[id[1]]=e.target.value;renderList()});
+$("#tools").addEventListener("click",e=>{if(e.target.id==="fx"){F.q=F.a=F.b=F.s=F.o="";F.n=false;filters();renderList()}});
+$("#list").addEventListener("click",e=>{const b=e.target.closest(".it,.pc");if(!b)return;sel=b.dataset.id;edit=false;renderList();renderPanel();if(innerWidth<860)$("#panel").scrollIntoView({behavior:"smooth"})});
+$("#panel").addEventListener("click",e=>{
+  const pb=e.target.closest("[data-play]");if(pb){const u=pb.dataset.play,t=(db[tab].find(i=>i.id===sel)||{}).naslov;if(window.mb&&window.mb.play)window.mb.play(u,t);else window.open(u,"_blank","noopener");return}
+  const x=db[tab].find(i=>i.id===sel);if(!x)return;const id=e.target.id;
+  if(id==="bEdit"){edit=true;renderPanel()}
+  else if(id==="bCancel"){edit=false;renderPanel()}
+  else if(id==="bOk"||id==="bZp"){snap();x.status=id==="bOk"?"P":"ZP";persist();render();toast(id==="bOk"?"Označeno kao provjereno":"Vraćeno na provjeru")}
+  else if(id==="bDel"){$("#mq").textContent=`Obrisati „${COLS[tab].title(x)}“? Možeš poništiti odmah poslije.`;$("#modal").classList.add("on");$("#my").focus()}
+  else if(id==="wAdd"){$("#ws").insertAdjacentHTML("beforeend",wrow())}
+  else if(e.target.hasAttribute("data-wdel")){e.target.closest(".wrow").remove()}
+  else if(id==="fAdd"){$("#fests").insertAdjacentHTML("beforeend",frow())}
+  else if(e.target.hasAttribute("data-fdel")){e.target.closest(".frow").remove()}
+  else if(id==="pPick"){$("#pimg").click()}
+  else if(id==="pDel"){setPoster("")}
+  else if(e.target.dataset.srt){srtTarget=e.target.dataset.srt;$("#srt").click()}
+});
+$("#panel").addEventListener("submit",e=>{
+  e.preventDefault();const x=db[tab].find(i=>i.id===sel);if(!x)return;snap();
+  const fd=new FormData(e.target);
+  COLS[tab].fields.forEach(([k,l,t])=>{
+    if(t==="fest"){set(x,k,[...document.querySelectorAll("#fests .frow")].map(r=>{const o={};r.querySelectorAll("[data-f]").forEach(i=>o[i.dataset.f]=i.value.trim());o.god=o.god&&!isNaN(+o.god)?+o.god:o.god;return o}).filter(o=>o.festival||o.nagrada));return}
+    if(t==="watch"){set(x,k,[...document.querySelectorAll("#ws .wrow")].map(r=>({vrsta:r.querySelector('[data-w=vrsta]').value,naziv:r.querySelector('[data-w=naziv]').value.trim(),url:r.querySelector('[data-w=url]').value.trim()})).filter(g=>g.naziv||g.url));return}
+    let v=fd.get(k)??"";
+    if(t==="num")v=v.trim()===""?"":+v||v.trim();
+    else if(t==="lines")v=v.split("\n").map(s=>s.trim()).filter(Boolean);
+    else if(t==="tags")v=v.split(",").map(s=>s.trim()).filter(Boolean);
+    set(x,k,v)});
+  edit=false;persist();render();toast("Kartica spremljena")
+});
+$("#mn").onclick=()=>$("#modal").classList.remove("on");
+$("#my").onclick=()=>{snap();db[tab]=db[tab].filter(i=>i.id!==sel);sel=null;$("#modal").classList.remove("on");persist();render();toast("Obrisano. Poništi vraća karticu.")};
+$("#bNew").onclick=()=>{snap();const c=COLS[tab],n=c.blank();n.id=c.prefix+Date.now().toString(36);db[tab].unshift(n);sel=n.id;edit=true;F.q=F.a=F.b=F.s="";persist();filters();render()};
+$("#bUndo").onclick=()=>{if(!undo)return;db=undo;undo=null;$("#bUndo").disabled=true;if(!db[tab].some(i=>i.id===sel))sel=null;edit=false;persist();render();toast("Poništeno")};
+$("#bSave").onclick=()=>{download(`memoria-bosniae-baza-${stamp()}.json`,db);toast(window.mb?"Izaberi gdje spremiti kopiju":"Baza spremljena u Preuzimanja")};
+$("#bLoad").onclick=()=>$("#file").click();
+$("#file").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d.filmovi||!d.knjige)throw 0;snap();db=migrate(d);sel=null;edit=false;persist();full();toast("Baza učitana: "+f.name)}catch(_){toast("Fajl nije baza MEMORIA BOSNIAE · CINEMA")}e.target.value=""};
+function buildExport(){const P=a=>a.filter(x=>x.status==="P");const PF=a=>P(a).map(f=>f.posterDozvola==="nema"?{...f,poster:""}:f);const strip=a=>a.map(x=>{const y={...x};delete y.napomena;delete y.putanja;delete y.dokument;return y});return {naziv:db.naziv,autor:"Ado Hasanović",prava:"© 2026 Ado Hasanović. Sva prava zadržana. Zabranjeno kopiranje i distribucija bez pisane dozvole autora.",izvezeno:new Date().toISOString(),filmovi:strip(PF(db.filmovi)),knjige:strip(P(db.knjige)),phd:strip(P(db.phd)),hronologija:strip(P(db.hronologija)),svjedocanstva:strip(P(db.svjedocanstva).filter(x=>x.saglasnost==="da")),arhiva:strip(P(db.arhiva).filter(x=>x.prava!=="nepoznato"))}}
+$("#bExport").onclick=()=>{const out=buildExport();download(`memoria-bosniae-web-${stamp()}.json`,out);toast(`Izvezeno za web: ${out.filmovi.length} filmova, ${out.knjige.length} knjiga, ${out.phd.length} PhD`)};
+function setPoster(u){const h=document.querySelector('#fm [name="poster"]');if(!h)return;h.value=u;$("#pv").innerHTML=u?`<img src="${u}" alt="">`:""}
+function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const W=Math.min(600,img.naturalWidth),H=Math.round(img.naturalHeight*W/img.naturalWidth);const c=document.createElement("canvas");c.width=W;c.height=H;c.getContext("2d").drawImage(img,0,0,W,H);URL.revokeObjectURL(img.src);res(c.toDataURL("image/jpeg",0.86))};img.onerror=rej;img.src=URL.createObjectURL(file)})}
+async function takePoster(f){if(!f||!/^image\//.test(f.type)){toast("To nije slika");return}try{setPoster(await shrink(f));toast("Plakat dodan. Upiši izvor i dozvolu, pa Spremi karticu.")}catch(_){toast("Slika se ne može učitati")}}
+$("#pimg").onchange=e=>{takePoster(e.target.files[0]);e.target.value=""};
+$("#panel").addEventListener("dragover",e=>{const d=e.target.closest("#drop");if(d){e.preventDefault();d.classList.add("on")}});
+$("#panel").addEventListener("dragleave",e=>{const d=e.target.closest("#drop");if(d)d.classList.remove("on")});
+$("#panel").addEventListener("drop",e=>{const d=e.target.closest("#drop");if(!d)return;e.preventDefault();d.classList.remove("on");takePoster(e.dataTransfer.files[0])});
+let srtTarget=null;
+function parseSrt(t){const blocks=t.replace(/\r/g,"").split(/\n\n+/);const txt=[],idx=[];let last=-999;
+  for(const b of blocks){const L=b.split("\n").filter(Boolean);const ti=L.findIndex(l=>/-->/.test(l));if(ti<0){if(b.trim())txt.push(b.trim());continue}
+    const m=L[ti].match(/(\d+):(\d+):(\d+)/);const body=L.slice(ti+1).join(" ").replace(/<[^>]+>/g,"").trim();if(!body)continue;txt.push(body);
+    if(m){const sec=+m[1]*3600+ +m[2]*60+ +m[3];if(sec-last>=60){last=sec;const mm=String(Math.floor(sec/60)).padStart(2,"0"),ss=String(sec%60).padStart(2,"0");idx.push(`${mm}:${ss} ${body.split(" ").slice(0,6).join(" ")}`)}}}
+  return{text:txt.join("\n"),idx}}
+$("#srt").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f||!srtTarget)return;const r=parseSrt(await f.text());const ta=document.querySelector(`#fm [name="${srtTarget}"]`);if(ta)ta.value=r.text;const ix=document.querySelector('#fm [name="indeks"]');if(ix&&!ix.value.trim()&&r.idx.length)ix.value=r.idx.join("\n");toast("Transkript učitan: "+f.name)};
+const dur=f=>new Promise(res=>{try{const v=document.createElement("video");v.preload="metadata";v.onloadedmetadata=()=>{const d=Math.round(v.duration||0);URL.revokeObjectURL(v.src);res(d?`${Math.floor(d/60)} min ${d%60} s`:"")};v.onerror=()=>res("");v.src=URL.createObjectURL(f)}catch(_){res("")}});
+$("#bVid").onclick=()=>$("#vid").click();
+$("#vid").onchange=async e=>{const fs=[...e.target.files];e.target.value="";if(!fs.length)return;snap();let n=0;
+  for(const f of fs){const base=f.name.replace(/\.[^.]+$/,"");const ratna=/\[?RATNA ARHIVA\]?/i.test(base);const naslov=base.replace(/\[?RATNA ARHIVA\]?/ig,"").replace(/[_]+/g," ").trim();
+    const it=COLS.arhiva.blank();it.id="v"+Date.now().toString(36)+n;it.naslov=naslov||base;it.originalni=f.name;it.putanja=window.mb&&window.mb.pathFor?window.mb.pathFor(f):"";it.trajanje=await dur(f);it.datum=new Date(f.lastModified).toISOString().slice(0,10);it.teme=ratna?["ratna arhiva"]:[];it.napomena="Uvezeno iz ADONIS "+new Date().toLocaleDateString("bs")+". Unesi izvor, link i prava.";db.arhiva.unshift(it);n++}
+  persist();sel=db.arhiva[0].id;edit=false;render();toast(`Uvezeno ${n} videa u Arhivu`)};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("#modal").classList.remove("on");if(edit){edit=false;renderPanel()}}});
+const WEB=!window.mb&&/^https?:$/.test(location.protocol);
+const SITE="https://adohasanovicfilm.github.io/memoria-bosniae/";
+async function tokState(){if(!window.mb||!window.mb.tokenInfo)return;const t=await window.mb.tokenInfo();$("#tokState").textContent=t.has?`Ključ je spremljen${t.user?" (GitHub: "+t.user+")":""}.`:"Ključ još nije spremljen."}
+$("#bSet").onclick=()=>{$("#smodal").classList.add("on");tokState();$("#tok").focus()};
+$("#sClose").onclick=()=>$("#smodal").classList.remove("on");
+$("#siteLink").onclick=e=>{e.preventDefault();window.mb&&window.mb.play?window.mb.openExternal(SITE):window.open(SITE)};
+$("#tokNew").onclick=()=>window.mb&&window.mb.openExternal("https://github.com/settings/personal-access-tokens/new");
+$("#tokSave").onclick=async()=>{const v=$("#tok").value.trim();if(!v){toast("Upiši ključ");return}$("#tokState").textContent="Provjeravam ključ…";const r=await window.mb.setToken(v);$("#tok").value="";if(r.ok){toast("Ključ spremljen");tokState()}else{$("#tokState").textContent="Ključ ne radi: "+(r.error||"")}};
+$("#bPub").onclick=async()=>{if(!window.mb||!window.mb.publish)return;const t=await window.mb.tokenInfo();if(!t.has){$("#bSet").click();return}
+  const b=$("#bPub");b.disabled=true;b.textContent="Objavljujem…";try{const out=buildExport();const r=await window.mb.publish(JSON.stringify(out));if(r.ok){toast(`Objavljeno: ${out.filmovi.length} filmova, ${out.knjige.length} knjiga. Web se osvježi za oko minut.`)}else toast("Objava nije uspjela: "+(r.error||""))}catch(e){toast("Objava nije uspjela")}b.disabled=false;b.textContent="Objavi na web"};
+const WPAPI=(lang,q)=>`https://${lang}.wikipedia.org/w/api.php?origin=*&format=json&action=query&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=600&${q}`;
+const okImg=t=>t&&t.source&&!/\.svg/i.test(t.source)&&!/(flag|logo|icon|map)/i.test(t.source);
+const nrm=s=>String(s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+async function webPoster(f){const k="mb-wp-"+f.id;try{const c=JSON.parse(localStorage.getItem(k)||"null");if(c&&(c.u||Date.now()-c.t<7*864e5))return c.u||null}catch(_){}
+  const names=[...new Set([f.naslovEn,f.naslov].filter(Boolean))],y=f.godina||"";let found=null;
+  outer:for(const lang of["en","bs","hr","sr","it"])for(const t of names){const tries=[`${t} (${y} film)`,`${t} (film)`,`${t} (${y} documentary)`,`${t} (dokumentarni film)`,t];
+    try{const j=await (await fetch(WPAPI(lang,"titles="+encodeURIComponent(tries.join("|"))))).json();const q=j.query||{},al={};(q.normalized||[]).concat(q.redirects||[]).forEach(n=>al[n.from]=n.to);const pg={};Object.values(q.pages||{}).forEach(p=>pg[p.title]=p);
+      for(const tt of tries){let kk=tt,g=0;while(al[kk]&&g++<3)kk=al[kk];const p=pg[kk];if(p&&!("missing" in p)&&okImg(p.thumbnail)){found=p.thumbnail.source;break outer}}}catch(_){}}
+  if(!found)for(const t of names){try{const j=await (await fetch(WPAPI("en","generator=search&gsrlimit=6&gsrsearch="+encodeURIComponent(t+" "+y+" film")))).json();const l=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);const h=l.find(p=>nrm(p.title).startsWith(nrm(t))&&okImg(p.thumbnail));if(h){found=h.thumbnail.source;break}}catch(_){}}
+  try{localStorage.setItem(k,JSON.stringify({u:found,t:Date.now()}))}catch(_){}return found}
+let rq=false;const redraw=()=>{if(rq)return;rq=true;requestAnimationFrame(()=>{rq=false;if(tab==="filmovi"){renderList();if(!edit)renderPanel()}})};
+function wantPosters(){const get=window.mb&&window.mb.poster?f=>window.mb.poster({id:f.id,naslov:f.naslov,naslovEn:f.naslovEn,godina:f.godina}):WEB?webPoster:null;if(!get)return;const q=db.filmovi.filter(f=>!f.poster&&!AUTO[f.id]);let i=0;
+  const next=async()=>{if(i>=q.length)return;const f=q[i++];try{const u=await get(f);if(u){AUTO[f.id]=u;redraw()}}catch(_){}next()};
+  for(let k=0;k<4;k++)next()}
+(async()=>{if(WEB){document.body.classList.add("web");try{const d=await (await fetch("data.json?v="+Date.now(),{cache:"no-store"})).json();db=migrate(d);["svjedocanstva","arhiva"].forEach(k=>{if(!db[k].length)delete COLS[k]})}catch(_){toast("Podaci se nisu mogli učitati")}}
+  else if(window.mb){if(window.mb.onUpdate){window.mb.onUpdate(v=>{$("#upmsg").textContent=`Nova verzija ${v} je spremna.`;$("#upbar").classList.add("on")});$("#upgo").onclick=()=>window.mb.restart();$("#uplater").onclick=()=>$("#upbar").classList.remove("on")}try{const v=await window.mb.version();$("#ver").textContent="Verzija "+v;document.title="MEMORIA BOSNIAE "+v}catch(_){}try{const t=await window.mb.load();if(t){db=migrate(JSON.parse(t))}else{db=migrate(clone(SEED));await window.mb.save(JSON.stringify(db))}}catch(_){toast("Baza se nije mogla učitati; otvorena je početna baza")}}full();wantPosters()})();
+}
+</script>
+</body>
+</html>
