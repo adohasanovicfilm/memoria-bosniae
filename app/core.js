@@ -195,7 +195,7 @@ let mainWin = null;
 const UPD = 'https://raw.githubusercontent.com/adohasanovicfilm/memoria-bosniae/main/app/';
 const cmpV = (a, b) => { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (let i = 0; i < 3; i++) { if ((a[i] || 0) !== (b[i] || 0)) return (a[i] || 0) - (b[i] || 0); } return 0; };
 const sha256 = buf => crypto.createHash('sha256').update(buf).digest('hex');
-let updating = false, readyVersion = null;
+let updating = false, readyVersion = null, lastUpdErr = '';
 async function checkUpdate(manual) {
   if (updating) return { ok: true, busy: true };
   if (readyVersion) { if (mainWin) mainWin.webContents.send('mb:updateReady', readyVersion); return { ok: true, ready: readyVersion }; }
@@ -216,8 +216,9 @@ async function checkUpdate(manual) {
       if (sha256(buf) !== hash) throw new Error('provjera nije prošla: ' + f);
       fs.writeFileSync(path.join(tmp, f), buf);
     }
-    fs.cpSync(path.join(MB.bundled, 'fonts'), path.join(tmp, 'fonts'), { recursive: true });
-    fs.copyFileSync(path.join(MB.bundled, 'fonts.css'), path.join(tmp, 'fonts.css'));
+    fs.mkdirSync(path.join(tmp, 'fonts'), { recursive: true });
+    for (const n of fs.readdirSync(path.join(MB.bundled, 'fonts'))) fs.writeFileSync(path.join(tmp, 'fonts', n), fs.readFileSync(path.join(MB.bundled, 'fonts', n)));
+    fs.writeFileSync(path.join(tmp, 'fonts.css'), fs.readFileSync(path.join(MB.bundled, 'fonts.css')));
     fs.writeFileSync(path.join(tmp, 'version.json'), JSON.stringify(m));
     const dst = path.join(dataDir(), 'update');
     fs.rmSync(dst, { recursive: true, force: true });
@@ -228,7 +229,10 @@ async function checkUpdate(manual) {
     return { ok: true, ready: m.version };
   } catch (e) {
     updating = false;
-    return { ok: false, error: String(e.message || e) };
+    lastUpdErr = String(e.message || e);
+    try { fs.writeFileSync(path.join(dataDir(), 'azuriranje-greska.txt'), new Date().toISOString() + ' ' + lastUpdErr); } catch (_) { /* ok */ }
+    if (!manual) setTimeout(() => checkUpdate(false), 10 * 60 * 1000);
+    return { ok: false, error: lastUpdErr };
   }
 }
 setInterval(() => checkUpdate(false), 6 * 3600 * 1000);
