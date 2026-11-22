@@ -428,10 +428,10 @@ $("#tokNew").onclick=()=>window.mb&&window.mb.openExternal("https://github.com/s
 $("#tokSave").onclick=async()=>{const v=$("#tok").value.trim();if(!v){toast("Upiši ključ");return}$("#tokState").textContent="Provjeravam ključ…";const r=await window.mb.setToken(v);$("#tok").value="";if(r.ok){toast("Ključ spremljen");tokState()}else{$("#tokState").textContent="Ključ ne radi: "+(r.error||"")}};
 $("#bPub").onclick=async()=>{if(!window.mb||!window.mb.publish)return;const t=await window.mb.tokenInfo();if(!t.has){$("#bSet").click();return}
   const b=$("#bPub");b.disabled=true;b.textContent="Objavljujem…";try{const out=buildExport();const r=await window.mb.publish(JSON.stringify(out));if(r.ok){toast(`Objavljeno: ${out.filmovi.length} filmova, ${out.knjige.length} knjiga. Web se osvježi za oko minut.`)}else toast("Objava nije uspjela: "+(r.error||""))}catch(e){toast("Objava nije uspjela")}b.disabled=false;b.textContent="Objavi na web"};
-const WPAPI=(lang,q)=>`https://${lang}.wikipedia.org/w/api.php?origin=*&format=json&action=query&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=600&${q}`;
+const WPAPI=(lang,q)=>`https://${lang}.wikipedia.org/w/api.php?origin=*&format=json&action=query&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=600&pilicense=any&${q}`;
 const okImg=t=>t&&t.source&&!/\.svg/i.test(t.source)&&!/(flag|logo|icon|map)/i.test(t.source);
 const nrm=s=>String(s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-async function webPoster(f){const k="mb-wp-"+f.id;try{const c=JSON.parse(localStorage.getItem(k)||"null");if(c&&(c.u||Date.now()-c.t<7*864e5))return c.u||null}catch(_){}
+async function webPoster(f){const k="mb-wp2-"+f.id;try{const c=JSON.parse(localStorage.getItem(k)||"null");if(c&&(c.u||Date.now()-c.t<7*864e5))return c.u||null}catch(_){}
   const names=[...new Set([f.naslovEn,f.naslov].filter(Boolean))],y=f.godina||"";let found=null;
   outer:for(const lang of["en","bs","hr","sr","it"])for(const t of names){const tries=[`${t} (${y} film)`,`${t} (film)`,`${t} (${y} documentary)`,`${t} (dokumentarni film)`,t];
     try{const j=await (await fetch(WPAPI(lang,"titles="+encodeURIComponent(tries.join("|"))))).json();const q=j.query||{},al={};(q.normalized||[]).concat(q.redirects||[]).forEach(n=>al[n.from]=n.to);const pg={};Object.values(q.pages||{}).forEach(p=>pg[p.title]=p);

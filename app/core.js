@@ -18,7 +18,7 @@ async function getJSON(url) {
 }
 const goodImg = t => t && t.source && !/\.svg/i.test(t.source) && !/(flag|logo|icon|map)/i.test(t.source);
 async function byTitles(lang, titles) {
-  const u = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=${encodeURIComponent(titles.join('|'))}`;
+  const u = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=600&pilicense=any&titles=${encodeURIComponent(titles.join('|'))}`;
   const j = await getJSON(u);
   const q = j.query || {};
   const alias = {};
@@ -35,7 +35,7 @@ async function byTitles(lang, titles) {
   return null;
 }
 async function bySearch(lang, title, year) {
-  const u = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=${encodeURIComponent(`${title} ${year || ''} film`)}&gsrlimit=6&prop=pageimages&piprop=thumbnail&pithumbsize=600`;
+  const u = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=${encodeURIComponent(`${title} ${year || ''} film`)}&gsrlimit=6&prop=pageimages&piprop=thumbnail&pithumbsize=600&pilicense=any`;
   const j = await getJSON(u);
   const list = Object.values((j.query || {}).pages || {}).sort((a, b) => a.index - b.index);
   const want = norm(title);
@@ -59,6 +59,8 @@ async function findPoster(f) {
 ipcMain.handle('mb:poster', async (_e, f) => {
   const dir = posterDir();
   fs.mkdirSync(dir, { recursive: true });
+  const mark = path.join(dir, '.v2');
+  if (!fs.existsSync(mark)) { try { fs.readdirSync(dir).filter(n => n.endsWith('.none')).forEach(n => fs.unlinkSync(path.join(dir, n))); fs.writeFileSync(mark, ''); } catch (e) { /* ok */ } }
   const id = String(f.id).replace(/[^a-zA-Z0-9_-]/g, '');
   const hit = fs.readdirSync(dir).find(n => n.startsWith(id + '.') && !n.endsWith('.none'));
   if (hit) return pathToFileURL(path.join(dir, hit)).href;
