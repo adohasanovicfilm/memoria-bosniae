@@ -1,1 +1,10 @@
-{"version":"3.6.6","datum":"2026-11-22T23:35:00.000Z","files":{"core.js":"1cb4d60ffc0d0ca3a312acb33755722c6fd3764ab201039ec5a2cc20a4a3cd74","preload.js":"48fb9e006c980861b16812aa2e2653bc0fca7fcdbc033326ef1d38cc9c0d4798","index.html":"1fe402e0408ab4b011afe8b03938a9ad01ad2e629be4e0ffbfde3adecc15c98c","web.html":"1fe402e0408ab4b011afe8b03938a9ad01ad2e629be4e0ffbfde3adecc15c98c"}}
+{
+  "version": "3.7.0",
+  "datum": "2026-11-23T12:00:00.000Z",
+  "files": {
+    "core.js": "1cb4d60ffc0d0ca3a312acb33755722c6fd3764ab201039ec5a2cc20a4a3cd74",
+    "preload.js": "48fb9e006c980861b16812aa2e2653bc0fca7fcdbc033326ef1d38cc9c0d4798",
+    "index.html": "c3bea123acab153ffe32c03766a0d2a0dbf0004d4788130fc0e50873a04c29f7",
+    "web.html": "c3bea123acab153ffe32c03766a0d2a0dbf0004d4788130fc0e50873a04c29f7"
+  }
+}
